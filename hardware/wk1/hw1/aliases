@@ -1,0 +1,3 @@
+alias iveri="iverilog -o compiled -c"
+alias irun="vvp compiled"
+alias wave="gtkwave"
