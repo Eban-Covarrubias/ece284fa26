@@ -61,18 +61,49 @@ endfunction
 
 
 
-function [3:0] x_bin ;
-
-...
-
+function [3:0] x_bin;
+  input integer activation;
+  begin
+    if (activation>7) begin
+     x_bin[3] = 1;
+     activation = activation - 8;
+    end
+    else
+     x_bin[3] = 0;
+    if (activation>3) begin
+     x_bin[2] = 1;
+     activation = activation - 4;
+    end
+    else
+     x_bin[2] = 0;
+    if (activation>1) begin
+     x_bin[1] = 1;
+     activation = activation - 2;
+    end
+    else
+     x_bin[1] = 0;
+    if (activation>0)
+     x_bin[0] = 1;
+    else
+     x_bin[0] = 0;
+  end
 endfunction
 
 
 // Below function is for verification
 function [psum_bw-1:0] mac_predicted;
-  
-...
-
+  input [bw-1:0] a;
+  input [bw-1:0] b;
+  input [psum_bw-1:0] c;
+  integer a_int, b_int, c_int;
+  begin
+    a_int = a;
+    b_int = b;
+    if (b[bw-1]) b_int = b_int - (1 << bw);
+    c_int = c;
+    if (c[psum_bw-1]) c_int = c_int - (1 << psum_bw);
+    mac_predicted = c_int + a_int * b_int;
+  end
 endfunction
 
 
