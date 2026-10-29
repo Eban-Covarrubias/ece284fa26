@@ -16,14 +16,15 @@ from models.quant_layer import weight_quantize_fn, act_quantization
 
 class QuantConv2d_nbit(nn.Conv2d):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=False,
-                 bit=2, act_alpha=8.0):
+                 bit=2, act_alpha=8.0, wgt_alpha=3.0):
         super(QuantConv2d_nbit, self).__init__(in_channels, out_channels, kernel_size, stride, padding, dilation,
                                                groups, bias)
         self.layer_type = 'QuantConv2d_nbit'
         self.bit = bit
         self.weight_quant = weight_quantize_fn(w_bit=self.bit)
+        self.weight_quant.wgt_alpha.data.fill_(float(wgt_alpha))   # initial weight clipping value (normalized units)
         self.act_alq = act_quantization(self.bit)
-        # initial activation clipping value; the first conv layer needs a smaller one (see resnet_quant_2bit.py)
+        # initial activation clipping value (see resnet_quant_2bit.py for the values used at 2 bits)
         self.act_alpha = torch.nn.Parameter(torch.tensor(float(act_alpha)))
         self.weight_q  = torch.nn.Parameter(torch.zeros([out_channels, in_channels, kernel_size, kernel_size]))
 
